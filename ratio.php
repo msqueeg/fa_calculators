@@ -111,3 +111,12 @@ if(!$_POST) { ?>
 	echo liability_assets_ratio($liabilities,$assets);
 
 }
+
+
+
+// ---
+
+
+
+
+

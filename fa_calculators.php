@@ -24,11 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-$filename = $_SERVER["PHP_SELF"];
-
 $formatter = new \NumberFormatter('en_US', \NumberFormatter::PERCENT);
-
-//custom functions:
 
 function gcd($a, $b) {
     $_a = abs($a);
@@ -62,3 +58,60 @@ function liability_assets_ratio($a,$b)
     return number_format((float)$b/$c, 2, '.', '') . ':' . $a/$c;
 }
 
+function current_ratio_form() {
+    echo '<form class="form-horizontal" method="post" action='.esc_url($_SERVER['REQUEST_URI']).'">';
+    echo '<fieldset>';
+    echo '<legend>Current Ratio Calculator</legend>';
+    echo '<!-- Current Assets -->';
+    echo '<div class="control-group">';
+    echo '<label class="control-label" for="assets">Your Current Assets</label>';        
+    echo '<div class="controls">';
+    echo '<input id="assets" name="assets" type="text" placeholder="($)" value="'.(isset($_POST["assets"]) ? esc_attr( $_POST["assets"]) : "").'" class="input-large">';
+    echo '</div></div>';
+    echo '<!-- Liabilities-->';
+    echo '<div class="control-group">';
+    echo '<label class="control-label" for="liabilities">Your Current Liabilities</label>';
+    echo '<div class="controls">';
+    echo '<input id="liabilities" name="liabilities" type="text" placeholder="($)" class="input-large">';
+    echo '</div></div>';
+    echo '<!-- Button -->';
+    echo '<div class="control-group">';
+    echo '<label class="control-label" for="submit">Calculate Your Current Ratio</label>';
+    echo '<div class="controls">';
+    echo '<button id="ratio_submit" name="submit" class="btn btn-success">Calculate</button>';
+    echo '</div></div>';
+    echo '</fieldset>';
+    echo '</form>';
+}
+
+function process_ratio_form(){
+
+    if (isset($_POST['submit'])) {
+    
+    //insert postback goodness here
+    $assets = $_POST['assets'];
+    $liabilities = $_POST['liabilities'];
+    $current_ratio = liability_assets_ratio($liabilities,$assets);
+
+    echo '<form>';
+    echo '<fieldset>';
+    echo '<!-- Current Ratio -->';
+    echo '<div class="control-group">';
+    echo '<label class="control-label" for="current_ratio">Your Current Ratio is:</label>';
+    echo '<div class="controls">';
+    echo '<input id="current_ratio" name="current_ratio" type="text" value="'.$current_ratio.'" class="input-large">';
+    echo '</div></div>';
+    echo '</fieldset>';
+    echo '</form>';
+    
+    }
+}
+
+function fa_current_ratio(){
+    ob_start();
+    process_ratio_form();
+    current_ratio_form();
+    return ob_get_clean();
+}
+
+add_shortcode('current_ratio', 'fa_current_ratio');
