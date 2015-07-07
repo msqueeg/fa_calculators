@@ -59,20 +59,20 @@ function liability_assets_ratio($a,$b)
 }
 
 function current_ratio_form() {
-    echo '<form class="form-horizontal" method="post" action='.esc_url($_SERVER['REQUEST_URI']).'">';
+    echo '<form class="form-horizontal" method="post" action='.esc_url($_SERVER['REQUEST_URI']).'>';
     echo '<fieldset>';
     echo '<legend>Current Ratio Calculator</legend>';
     echo '<!-- Current Assets -->';
     echo '<div class="control-group">';
     echo '<label class="control-label" for="assets">Your Current Assets</label>';        
     echo '<div class="controls">';
-    echo '<input id="assets" name="assets" type="text" placeholder="($)" value="'.(isset($_POST["assets"]) ? esc_attr( $_POST["assets"]) : "").'" class="input-large">';
+    echo '<input id="assets" name="assets" type="text" placeholder="($)" value="'.(isset($_POST["assets"]) ? esc_attr( $_POST["assets"]) : "").'" class="input-small">';
     echo '</div></div>';
     echo '<!-- Liabilities-->';
     echo '<div class="control-group">';
     echo '<label class="control-label" for="liabilities">Your Current Liabilities</label>';
     echo '<div class="controls">';
-    echo '<input id="liabilities" name="liabilities" type="text" placeholder="($)" class="input-large">';
+    echo '<input id="liabilities" name="liabilities" type="text" placeholder="($)" value="'.(isset($_POST["liabilities"]) ? esc_attr($_POST["assets"]) : "").'" class="input-small">';
     echo '</div></div>';
     echo '<!-- Button -->';
     echo '<div class="control-group">';
