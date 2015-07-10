@@ -24,6 +24,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* calcuation functions */
+
 $formatter = new \NumberFormatter('en_US', \NumberFormatter::PERCENT);
 
 function gcd($a, $b) {
@@ -51,67 +53,287 @@ function quick_ratio($assets,$liabilities,$inventory)
     return number_format((float)$liabilities/$c, 2, '.', '') . ':' . $a/$c;
 }
 
-function liability_assets_ratio($a,$b)
+function assets_ratio($a,$b)
 {
     $c = gcd($a,$b);
-
-    return number_format((float)$b/$c, 2, '.', '') . ':' . $a/$c;
+    
+    return number_format((int)$b/$c, 2, '.', '') . ':' . $a/$c;
 }
 
-function current_ratio_form() {
-    echo '<form class="form-horizontal" method="post" action='.esc_url($_SERVER['REQUEST_URI']).'>';
-    echo '<fieldset>';
-    echo '<legend>Current Ratio Calculator</legend>';
-    echo '<!-- Current Assets -->';
-    echo '<div class="control-group">';
-    echo '<label class="control-label" for="assets">Your Current Assets</label>';        
-    echo '<div class="controls">';
-    echo '<input id="assets" name="assets" type="text" placeholder="($)" value="'.(isset($_POST["assets"]) ? esc_attr( $_POST["assets"]) : "").'" class="input-small">';
-    echo '</div></div>';
-    echo '<!-- Liabilities-->';
-    echo '<div class="control-group">';
-    echo '<label class="control-label" for="liabilities">Your Current Liabilities</label>';
-    echo '<div class="controls">';
-    echo '<input id="liabilities" name="liabilities" type="text" placeholder="($)" value="'.(isset($_POST["liabilities"]) ? esc_attr($_POST["assets"]) : "").'" class="input-small">';
-    echo '</div></div>';
-    echo '<!-- Button -->';
-    echo '<div class="control-group">';
-    echo '<label class="control-label" for="submit">Calculate Your Current Ratio</label>';
-    echo '<div class="controls">';
-    echo '<button id="ratio_submit" name="submit" class="btn btn-success">Calculate</button>';
-    echo '</div></div>';
-    echo '</fieldset>';
-    echo '</form>';
+/* display & processing forms*/
+
+function display_ratio_form($first_label,$second_label) {
+ echo    '<div class="loan_payment">
+          <form class="form-horizontal" data-toggle="validator" method="post" action='.esc_url($_SERVER['REQUEST_URI']).'>
+          <ul class="listing">
+           <li class="clearfix">
+               <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">1</span>'.$first_label.'</div></div>
+               <div class="col-md-6">
+               <input type="text" pattern="^[0-9\$,]*$" class="form-control inputbox list_form" id="first_field" name="first_field"  value="'.(isset($_POST["first_field"]) ? esc_attr( $_POST["first_field"]) : "").'" placeholder="$5,000" required>
+               <span class="help-block with-errors">Round to the nearest dollar</span>
+               </div>
+           </li>
+           
+            <li class="clearfix">
+               <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">2</span>'.$second_label.'</div></div>
+               <div class="col-md-6">
+               <input type="text" pattern="^[0-9\$,]*$" class="form-control inputbox list_form" id="second_field" name="second_field" value="'.(isset($_POST["second_field"]) ? esc_attr( $_POST["second_field"]) : "").'" placeholder="$3,000"  required>
+               <span class="help-block with-errors">Round to the nearest dollar</span>
+               </div>
+           </li>
+          </ul>
+          <button id="submit" name="submit" class="caclt_bt">Calculate!</button>
+         </form>
+          <script type="text/javascript">
+              $(document).ready(function(){
+                $(".form-horizontal").submit(function(){
+                  var first_field = $("input[name=\'first_field\']").val()
+                  var second_field = $("input[name=\'second_field\']").val()
+                  first_field = first_field.replace(\',\',\'\');
+                  second_field = second_field.replace(\',\',\'\');
+                  $("input[name=\'first_field\']").val(first_field.replace(\'$\',\'\'));
+                  $("input[name=\'second_field\']").val(second_field.replace(\'$\',\'\'));
+                });
+              });
+              </script>
+         </div>';
 }
 
-function process_ratio_form(){
+function process_ratio_form($first_label,$second_label,$third_label){
 
     if (isset($_POST['submit'])) {
     
     //insert postback goodness here
-    $assets = $_POST['assets'];
-    $liabilities = $_POST['liabilities'];
-    $current_ratio = liability_assets_ratio($liabilities,$assets);
+    $first_field = $_POST['first_field'];
+    $second_field = $_POST['second_field'];
+    $ratio = assets_ratio($second_field,$first_field);
 
-    echo '<form>';
-    echo '<fieldset>';
-    echo '<!-- Current Ratio -->';
-    echo '<div class="control-group">';
-    echo '<label class="control-label" for="current_ratio">Your Current Ratio is:</label>';
-    echo '<div class="controls">';
-    echo '<input id="current_ratio" name="current_ratio" type="text" value="'.$current_ratio.'" class="input-large">';
-    echo '</div></div>';
-    echo '</fieldset>';
-    echo '</form>';
-    
+    echo '<div class="loan_payment clearfix">
+              <h4>Current Ratio</h4>
+              <div class="col-xs-6 pay">
+               <div class="payment">Your Inputs</div>
+               <div class="pay_sec clearfix">
+              <div class="col-xs-6 payment_de">
+               <h5>'.$first_label.'</h5>
+               <p class="ammount">'.$first_field.'</p>
+              </div>
+              
+              <div class="col-xs-6 payment_de">
+               <h5>'.$second_label.'</h5>
+               <p class="ammount">'.$second_field.'</p>
+              </div>
+              </div>
+              
+              </div>
+              
+              <div class="col-xs-6 pay">
+                   <div class="payment">Calculated Ratio</div>
+                   <div class="pay_sec clearfix">
+                  
+                  
+                  <div class="col-xs-12 payment_de">
+                   <h5>'.$third_label.'</h5>
+                   <p class="ammount"><span>'.$ratio.'</span>per month</p>
+                  </div>
+                  </div>
+              
+              </div>
+         </div>
+    ';    
     }
 }
 
-function fa_current_ratio(){
+function display_allowable_form(){
+
+    echo '
+    <div class="loan_payment">
+           <form id="allowable" data-toggle="validator" method="post" action="'.esc_url($_SERVER['REQUEST_URI']).'">
+              <ul class="listing">
+               <li class="clearfix">
+                   <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">1</span>Ticket Average</div></div>
+                   <div class="col-md-6">
+                   <input type="text" id="ticket_average" pattern="^[0-9\.\$,]*$" name="ticket_average" class="form-control inputbox list_form" id="ticket_average" value="$150.00" required>
+                   </div>
+               </li>
+               
+                <li class="clearfix">
+                   <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">2</span>Fulfillment (%)</div></div>
+                   <div class="col-md-6">
+                   <input type="text" id="fulfillment_pct" pattern="^[0-9\.%]*$"  name="fulfillment_pct" class="form-control inputbox list_form" id="fulfillment_pct" value="17%" required>
+                   </div>
+               </li>
+               
+                <li class="clearfix">
+                   <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">3</span>Refunds (%)</div></div>
+                   <div class="col-md-6">
+                   <input type="text" id="refunds_pct" pattern="^[0-9\.%]*$"  name="refund_pct" class="form-control inputbox list_form" id="refunds_pct" value="15%" required>
+                   </div>
+               </li>
+               
+               
+                <li class="clearfix">
+                   <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">4</span>Merchant Fees (%) </div></div>
+                   <div class="col-md-6">
+                   <input type="text" id="fees_pct" pattern="^[0-9\.%]*$" name="fees_pct" class="form-control inputbox list_form" id="fees_pct" value="8%" required>
+                   </div>
+               </li>
+
+               <li class="clearfix">
+                   <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">4</span>Overhead (%) </div></div>
+                   <div class="col-md-6">
+                   <input type="text" id="overhead_pct" pattern="^[0-9\.%]*$" name="overhead_pct" class="form-control inputbox list_form" id="overhead_pct" value="30%" required>
+                   </div>
+               </li>
+              
+              </ul>
+              <button name="submit" id="submit" class="caclt_bt">Calculate!</button> 
+           </form>
+         </div>
+    ';
+
+}
+
+function process_allowable_form(){
+    if (isset($_POST['submit'])) {
+        global $formatter;
+        $money_replace = array("$",",");
+
+        $ticket_average = str_replace($money_replace,"",$_POST['ticket_average']);
+        $fulfillment_pct = str_replace("%","",$_POST['fulfillment_pct']) / 100 ;
+        $refund_pct = str_replace("%","",$_POST['refund_pct']) / 100 ;
+        $fees_pct = str_replace("%","",$_POST['fees_pct']) / 100 ;
+        $overhead_pct = str_replace("%","",$_POST['overhead_pct']) / 100 ;
+
+        $fulfillment_amt = $ticket_average * $fulfillment_pct;
+        $refund_amt = $ticket_average * $refund_pct;
+        $fees_amt = $ticket_average * $fees_pct;
+        $overhead_amt = $ticket_average * $overhead_pct;
+
+        $costs = $fulfillment_amt + $refund_amt + $fees_pct + $overhead_pct;
+
+        $suggested_media_spend_pct = '.3';
+        $suggested_media_spend_amt = $ticket_average * $suggested_media_spend_pct;
+
+        $your_remainder = $ticket_average - $costs;
+
+        $your_pct = 100 - $your_remainder / $ticket_average;
+
+        
+
+        echo '<div class="clearfix"></div>
+        <div class="loan_payment clearfix">
+          <h4>Your Allowable Media Spend:</h4>
+          <div class="col-xs-6 pay">
+           <div class="payment">Your costs per ticket:</div>
+           <div class="pay_sec clearfix">
+          <div class="col-xs-6 payment_de">
+           <h5>Average Ticket Value</h5>
+           <p class="ammount">$'.(isset($ticket_average) ? number_format($ticket_average,2,".",",") : "--").'</p>
+           <hr>
+           <h5>Fullfillment costs per ticket</h5>
+           <p class="amount">$'.(isset($fulfillment_pct) ? number_format($fulfillment_amt,2,".",",") : "--").'</p>
+           <hr>
+           <h5>Refund Costs per ticket</h5>
+           <p class="amount">$'.(isset($refund_pct) ? number_format($refund_amt,2,".",",") : "--").'</p>
+          </div>
+          
+          <div class="col-xs-6 payment_de">
+           <h5>Merchant Fees per ticket</h5>
+           <p class="ammount">$'.(isset($fees_pct) ? number_format($fees_amt,2,".",",") : "--").'</p>
+           <hr>
+           <h5>Overhead Costs per ticekt</h5>
+           <p class="ammount">$'.(isset($overhead_pct) ? number_format($overhead_amt,2,".",",") : "--").'</p>
+          </div>
+          </div>
+          
+          </div>
+          
+          <div class="col-xs-6 pay">
+           <div class="payment">Suggested Media Spend</div>
+           <div class="pay_sec clearfix">
+           <div class="col-xs-6 payment_de">
+             <h5>Percentage</h5>
+             <p class="ammount"><span>'.$formatter->format($suggested_media_spend_pct).'</span></p>
+           </div>          
+          <div class="col-xs-6 payment_de">
+           <h5>Amount:</h5>
+           <p class="ammount"><span>$'.(isset($suggested_media_spend_amt) ? number_format($suggested_media_spend_amt,2,".",",") : "--").'</span>per ticket</p>
+          </div>
+          </div>
+          <div class="payment">Your Media Spend</div>
+           <div class="pay_sec clearfix">
+           <div class="col-xs-6 payment_de">
+             <h5>Percentage</h5>
+             <p class="ammount"><span>'.$formatter->format($your_pct).'</span></p>
+           </div>          
+          <div class="col-xs-6 payment_de">
+           <h5>Amount:</h5>
+           <p class="ammount"><span>$'.$your_remainder.'</span>per ticket</p>
+          </div>
+          </div>
+          
+          </div>
+         </div>';
+
+    }
+}
+
+function fa_allowable_spend() {
     ob_start();
-    process_ratio_form();
-    current_ratio_form();
+    display_allowable_form();
+    process_allowable_form();
     return ob_get_clean();
 }
 
+
+function fa_current_ratio(){
+    $first_label = "Your Current Assets";
+    $second_label = "Your Current Liabilities";
+    $third_label = "Your Current Ratio";
+
+    ob_start();
+    display_ratio_form($first_label,$second_label);
+    process_ratio_form($first_label,$second_label,$third_label);
+    return ob_get_clean();
+}
+
+function fa_debt_to_assets(){
+    $first_label = "Your Total Assets";
+    $second_label = "Your Total Debts";
+    $third_label = "Your Debt to Assets Ratio";
+
+    ob_start();
+    return ob_get_clean();
+
+}
+
+function fa_return_on_assets(){
+    $first_label = "Your Net Income";
+    $second_label = "Your Total Assets";
+    $third_label = "Your Return on Assets Ratio";
+
+    ob_start();
+    return ob_get_clean();
+}
+
+function fa_gross_profit(){
+    $first_label = "Your Current Assets";
+    $second_label = "Your Current Liabilities";
+    $third_label = "Your Current Ratio";
+
+    ob_start();
+    return ob_get_clean();
+}
+
+function fa_operating_profit_pct() {
+    $first_label = "Your Operating Income";
+    $second_label = "Your Sales";
+    $third_label = "Operating Profit Percentage";
+
+    ob_start();
+    return ob_get_clean();   
+}
+
+/** shortcodes to hook into WordPress **/
 add_shortcode('current_ratio', 'fa_current_ratio');
+add_shortcode('allowable_spend','fa_allowable_spend');
