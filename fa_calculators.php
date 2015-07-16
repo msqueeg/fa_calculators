@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* calcuation functions */
 
-$formatter = new \NumberFormatter('en_US', \NumberFormatter::PERCENT);
+//$formatter = new \NumberFormatter('en_US', \NumberFormatter::PERCENT);
 
 function gcd($a, $b) {
     $_a = abs($a);
@@ -42,8 +42,8 @@ function gcd($a, $b) {
 }
 
 function percent_ratio($a,$b) {
-  global $formatter;
-	return $formatter->format($a/$b);
+  
+	return sprintf("%.2f%%", $a / $b * 100);
 }
 
 function quick_ratio($assets,$liabilities,$inventory)
@@ -240,7 +240,6 @@ function process_allowable_form(){
 
         $your_pct = 100 - $your_remainder / $ticket_average;
 
-        
 
         echo '<div class="clearfix"></div>
         <div class="loan_payment clearfix">
@@ -278,7 +277,7 @@ function process_allowable_form(){
            <div class="pay_sec clearfix">
            <div class="col-xs-6 payment_de">
              <h5>Percentage</h5>
-             <p class="ammount"><span>'.$formatter->format($suggested_media_spend_pct).'</span></p>
+             <p class="ammount"><span>'.sprintf("%.2f%%", $suggested_media_spend_pct).'</span></p>
            </div>          
           <div class="col-xs-6 payment_de">
            <h5>Amount:</h5>
@@ -289,7 +288,7 @@ function process_allowable_form(){
            <div class="pay_sec clearfix">
            <div class="col-xs-6 payment_de">
              <h5>Percentage</h5>
-             <p class="ammount"><span>'.$formatter->format($your_pct).'</span></p>
+             <p class="ammount"><span>'.sprintf("%.2f%%", $your_pct).'</span></p>
            </div>          
           <div class="col-xs-6 payment_de">
            <h5>Amount:</h5>
