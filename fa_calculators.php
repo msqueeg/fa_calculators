@@ -2,10 +2,10 @@
 /*
 Plugin Name: FA Calculators
 Plugin URI: http://www.fullyaccountable.com
-Description: This is a test plugin.
+Description: This plugin contains calculators for the Fully Accountable Member's Area.
 Author: Michael Miller
 Author URI: http://michael-miller.org/
-Version: 0.0.1
+Version: 1.0.0
 
 Test WordPress Plugin
 Copyright (C) 2015 Michael Miller (millermichael76@gmail.com)
@@ -42,6 +42,7 @@ function gcd($a, $b) {
 }
 
 function percent_ratio($a,$b) {
+  global $formatter;
 	return $formatter->format($a/$b);
 }
 
@@ -99,14 +100,19 @@ function display_ratio_form($first_label,$second_label) {
          </div>';
 }
 
-function process_ratio_form($first_label,$second_label,$third_label){
+function process_ratio_form($first_label,$second_label,$third_label,$pct = false){
 
     if (isset($_POST['submit'])) {
     
     //insert postback goodness here
     $first_field = $_POST['first_field'];
     $second_field = $_POST['second_field'];
-    $ratio = assets_ratio($second_field,$first_field);
+    if(!$pct){
+      $ratio = assets_ratio($second_field,$first_field);
+    } else {
+      $ratio = percent_ratio($first_field,$second_field);  
+    }
+    
 
     echo '<div class="loan_payment clearfix">
               <h4>Current Ratio</h4>
@@ -195,8 +201,25 @@ function display_allowable_form(){
 
 function process_allowable_form(){
     if (isset($_POST['submit'])) {
+
         global $formatter;
+
         $money_replace = array("$",",");
+        $ticket_average = 0;
+        $fulfillment_pct = 0;
+        $refund_pct = 0;
+        $fees_pct = 0;
+        $overhead_pct = 0;
+        $fulfillment_amt = 0;
+        $refund_amt = 0;
+        $fees_amt = 0;
+        $overhead_amt = 0;
+        $costs = 0;
+        $suggested_media_spend_pct = 0.3;
+        $suggested_media_spend_amt = 0;
+        $your_remainder = 0;
+        $your_pct = 0;
+       
 
         $ticket_average = str_replace($money_replace,"",$_POST['ticket_average']);
         $fulfillment_pct = str_replace("%","",$_POST['fulfillment_pct']) / 100 ;
@@ -209,9 +232,8 @@ function process_allowable_form(){
         $fees_amt = $ticket_average * $fees_pct;
         $overhead_amt = $ticket_average * $overhead_pct;
 
-        $costs = $fulfillment_amt + $refund_amt + $fees_pct + $overhead_pct;
+        $costs = $fulfillment_amt + $refund_amt + $fees_amt + $overhead_amt;
 
-        $suggested_media_spend_pct = '.3';
         $suggested_media_spend_amt = $ticket_average * $suggested_media_spend_pct;
 
         $your_remainder = $ticket_average - $costs;
@@ -241,8 +263,11 @@ function process_allowable_form(){
            <h5>Merchant Fees per ticket</h5>
            <p class="ammount">$'.(isset($fees_pct) ? number_format($fees_amt,2,".",",") : "--").'</p>
            <hr>
-           <h5>Overhead Costs per ticekt</h5>
+           <h5>Overhead Costs per ticket</h5>
            <p class="ammount">$'.(isset($overhead_pct) ? number_format($overhead_amt,2,".",",") : "--").'</p>
+           <hr>
+           <h5>Total Costs</h5>
+           <p class="ammount">$'.(isset($overhead_pct) ? number_format($costs,2,".",",") : "--").'</p>
           </div>
           </div>
           
@@ -260,7 +285,7 @@ function process_allowable_form(){
            <p class="ammount"><span>$'.(isset($suggested_media_spend_amt) ? number_format($suggested_media_spend_amt,2,".",",") : "--").'</span>per ticket</p>
           </div>
           </div>
-          <div class="payment">Your Media Spend</div>
+          <div class="payment">Your Maximum Media Spend</div>
            <div class="pay_sec clearfix">
            <div class="col-xs-6 payment_de">
              <h5>Percentage</h5>
@@ -301,7 +326,8 @@ function fa_debt_to_assets(){
     $first_label = "Your Total Assets";
     $second_label = "Your Total Debts";
     $third_label = "Your Debt to Assets Ratio";
-
+    display_ratio_form($first_label,$second_label);
+    process_ratio_form($first_label,$second_label,$third_label,$pct, true);
     ob_start();
     return ob_get_clean();
 
@@ -311,7 +337,8 @@ function fa_return_on_assets(){
     $first_label = "Your Net Income";
     $second_label = "Your Total Assets";
     $third_label = "Your Return on Assets Ratio";
-
+    display_ratio_form($first_label,$second_label);
+    process_ratio_form($first_label,$second_label,$third_label);
     ob_start();
     return ob_get_clean();
 }
@@ -320,7 +347,8 @@ function fa_gross_profit(){
     $first_label = "Your Current Assets";
     $second_label = "Your Current Liabilities";
     $third_label = "Your Current Ratio";
-
+    display_ratio_form($first_label,$second_label);
+    process_ratio_form($first_label,$second_label,$third_label);
     ob_start();
     return ob_get_clean();
 }
@@ -329,7 +357,8 @@ function fa_operating_profit_pct() {
     $first_label = "Your Operating Income";
     $second_label = "Your Sales";
     $third_label = "Operating Profit Percentage";
-
+    display_ratio_form($first_label,$second_label);
+    process_ratio_form($first_label,$second_label,$third_label, true);
     ob_start();
     return ob_get_clean();   
 }
@@ -337,3 +366,7 @@ function fa_operating_profit_pct() {
 /** shortcodes to hook into WordPress **/
 add_shortcode('current_ratio', 'fa_current_ratio');
 add_shortcode('allowable_spend','fa_allowable_spend');
+add_shortcode('debt_to_assets', 'fa_debt_to_assets');
+add_shortcode('return_on_assets','fa_return_on_assets');
+add_shortcode('gross_profit','fa_gross_profit');
+add_shortcode('operating_profit','fa_operating_profit_pct');
