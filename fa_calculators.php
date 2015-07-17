@@ -290,7 +290,7 @@ function process_allowable_form(){
            </div>          
           <div class="col-xs-6 payment_de">
            <h5>Amount:</h5>
-           <p class="ammount"><span>$'.(number_format($your_remainder,2,".",",")).'</span>per ticket</p>
+           <p class="ammount"><span>$'.(number_format($your_margin,2,".",",")).'</span>per ticket</p>
           </div>
           </div>
           
