@@ -112,7 +112,6 @@ function process_ratio_form($first_label,$second_label,$third_label,$pct = false
     } else {
       $ratio = percent_ratio($first_field,$second_field);  
     }
-    
 
     echo '<div class="loan_payment clearfix">
               <h4>Current Ratio</h4>
@@ -145,7 +144,7 @@ function process_ratio_form($first_label,$second_label,$third_label,$pct = false
               
               </div>
          </div>
-    ';    
+    ';  
     }
 }
 
@@ -202,7 +201,6 @@ function display_allowable_form(){
 function process_allowable_form(){
     if (isset($_POST['submit'])) {
 
-        global $formatter;
 
         $money_replace = array("$",",");
         $ticket_average = 0;
@@ -236,9 +234,9 @@ function process_allowable_form(){
 
         $suggested_media_spend_amt = $ticket_average * $suggested_media_spend_pct;
 
-        $your_remainder = $ticket_average - $costs;
+        $your_margin = $ticket_average - $costs;
 
-        $your_pct = 100 - $your_remainder / $ticket_average;
+        $your_pct = $your_margin / $ticket_average;
 
 
         echo '<div class="clearfix"></div>
@@ -277,7 +275,7 @@ function process_allowable_form(){
            <div class="pay_sec clearfix">
            <div class="col-xs-6 payment_de">
              <h5>Percentage</h5>
-             <p class="ammount"><span>'.sprintf("%.2f%%", $suggested_media_spend_pct).'</span></p>
+             <p class="ammount"><span>'.sprintf("%.2f%%", $suggested_media_spend_pct * 100).'</span></p>
            </div>          
           <div class="col-xs-6 payment_de">
            <h5>Amount:</h5>
@@ -288,11 +286,11 @@ function process_allowable_form(){
            <div class="pay_sec clearfix">
            <div class="col-xs-6 payment_de">
              <h5>Percentage</h5>
-             <p class="ammount"><span>'.sprintf("%.2f%%", $your_pct).'</span></p>
+             <p class="ammount"><span>'.sprintf("%.2f%%", $your_pct * 100).'</span></p>
            </div>          
           <div class="col-xs-6 payment_de">
            <h5>Amount:</h5>
-           <p class="ammount"><span>$'.$your_remainder.'</span>per ticket</p>
+           <p class="ammount"><span>$'.(number_format($your_remainder,2,".",",")).'</span>per ticket</p>
           </div>
           </div>
           
