@@ -157,21 +157,21 @@ function display_allowable_form(){
                <li class="clearfix">
                    <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">1</span>Ticket Average</div></div>
                    <div class="col-md-6">
-                   <input type="text" id="ticket_average" pattern="^[0-9\.\$,]*$" name="ticket_average" class="form-control inputbox list_form" id="ticket_average" value="$150.00" required>
+                   <input type="text" id="ticket_average" pattern="^[0-9\.\$,]*$" name="ticket_average" class="form-control inputbox list_form" id="ticket_average" value="'.(isset($_POST["ticket_average"]) ? esc_attr( $_POST["ticket_average"]) : "$150.00").'" required>
                    </div>
                </li>
                
                 <li class="clearfix">
                    <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">2</span>Fulfillment (%)</div></div>
                    <div class="col-md-6">
-                   <input type="text" id="fulfillment_pct" pattern="^[0-9\.%]*$"  name="fulfillment_pct" class="form-control inputbox list_form" id="fulfillment_pct" value="17%" required>
+                   <input type="text" id="fulfillment_pct" pattern="^[0-9\.%]*$"  name="fulfillment_pct" class="form-control inputbox list_form" id="fulfillment_pct" value="'.(isset($_POST["fulfillment_pct"]) ? esc_attr( $_POST["fulfillment_pct"]) : "17%").'" required>
                    </div>
                </li>
                
                 <li class="clearfix">
                    <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">3</span>Refunds (%)</div></div>
                    <div class="col-md-6">
-                   <input type="text" id="refunds_pct" pattern="^[0-9\.%]*$"  name="refund_pct" class="form-control inputbox list_form" id="refunds_pct" value="15%" required>
+                   <input type="text" id="refunds_pct" pattern="^[0-9\.%]*$"  name="refund_pct" class="form-control inputbox list_form" id="refunds_pct" value="'.(isset($_POST["refund_pct"]) ? esc_attr( $_POST["refund_pct"]) : "15%").'" required>
                    </div>
                </li>
                
@@ -179,14 +179,14 @@ function display_allowable_form(){
                 <li class="clearfix">
                    <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">4</span>Merchant Fees (%) </div></div>
                    <div class="col-md-6">
-                   <input type="text" id="fees_pct" pattern="^[0-9\.%]*$" name="fees_pct" class="form-control inputbox list_form" id="fees_pct" value="8%" required>
+                   <input type="text" id="fees_pct" pattern="^[0-9\.%]*$" name="fees_pct" class="form-control inputbox list_form" id="fees_pct" value="'.(isset($_POST["fees_pct"]) ? esc_attr( $_POST["fees_pct"]) : "8%").'" required>
                    </div>
                </li>
 
                <li class="clearfix">
                    <div class="col-md-6 loan_txt"><div class="loan_txt1"><span class="numbering">4</span>Overhead (%) </div></div>
                    <div class="col-md-6">
-                   <input type="text" id="overhead_pct" pattern="^[0-9\.%]*$" name="overhead_pct" class="form-control inputbox list_form" id="overhead_pct" value="30%" required>
+                   <input type="text" id="overhead_pct" pattern="^[0-9\.%]*$" name="overhead_pct" class="form-control inputbox list_form" id="overhead_pct" value="'.(isset($_POST["overhead_pct"]) ? esc_attr( $_POST["overhead_pct"]) : "30%").'" required>
                    </div>
                </li>
               
